@@ -120,15 +120,27 @@ window.addEventListener("DOMContentLoaded", () => {
   function fit() {
     const r = webview.getBoundingClientRect();
     const scale = dpr();
+
     glc.style.width = hud.style.width = r.width + "px";
     glc.style.height = hud.style.height = r.height + "px";
     glc.width = Math.max(2, Math.floor(r.width * scale));
     glc.height = Math.max(2, Math.floor(r.height * scale));
     hud.width = glc.width;
     hud.height = glc.height;
+    if (offId) window.live.resize(Math.round(r.width), Math.round(r.height));
+
     drawAll();
   }
   window.addEventListener("resize", fit);
+
+  liveChk.onchange = async () => {
+    if (liveChk.checked) {
+      autoChk.checked = false;
+      await startLiveStream();
+    } else {
+      await stopLiveStream();
+    }
+  };
 
   // ---------- WebGL shader ----------
   const gl = glc.getContext("webgl2", {
@@ -695,6 +707,59 @@ void main(){ vec2 u=v; u=baseMap(u); u=lensMap(u); if(any(lessThan(u,vec2(0.)))|
     dbg.haveTex = false;
     drawAll();
   }
+
+  let offId = null; // offscreen webContents id (for input)
+  let unSubLive = null; // unsubscribe fn
+
+  async function startLiveStream() {
+    const r = webview.getBoundingClientRect();
+    const { wcId } = await window.live.start(
+      webview.getURL(),
+      Math.round(r.width),
+      Math.round(r.height),
+      30,
+    );
+    offId = wcId;
+    if (unSubLive) unSubLive(); // just in case
+    unSubLive = window.live.onFrame(async ({ dataURL, size }) => {
+      const img = new Image();
+      img.src = dataURL;
+      await img.decode();
+      ensureTex();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      dbg.haveTex = true;
+      dbg.texW = size.width;
+      dbg.texH = size.height;
+      dbg.lastSnap = performance.now();
+      drawAll();
+    });
+  }
+
+  async function stopLiveStream() {
+    await window.live.stop();
+    if (unSubLive) {
+      unSubLive();
+      unSubLive = null;
+    }
+    offId = null;
+  }
+
+  async function sendWebviewEvent(ev) {
+    try {
+      if (offId) {
+        // Send to offscreen window via IPC bridge
+        // (reuse your existing native.sendInput handler)
+        await window.native.sendInput(offId, ev);
+      } else {
+        await webview.sendInputEvent(ev);
+      }
+    } catch (e) {
+      console.warn("input send failed", e);
+    }
+  }
+
   function testToggleLive() {
     liveHidden = !liveHidden;
     webview.style.opacity = liveHidden ? "0" : "1";
