@@ -1,6 +1,6 @@
 {
-  "name": "crumple-browser-multi",
-  "version": "0.2.1",
+  "name": "crumple-image-test",
+  "version": "0.1.0",
   "private": true,
   "main": "main.js",
   "type": "module",
