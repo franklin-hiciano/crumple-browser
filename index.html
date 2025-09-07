@@ -1,55 +1,28 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>CrumpleBrowser</title>
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
-        <header>
-            <input id="url" placeholder="Enter URL and press Enter" />
-            <button id="go">Go</button>
-            <div class="spacer"></div>
-            <button id="snap">Snap</button>
-            <label class="chk"
-                ><input type="checkbox" id="auto" checked /> Auto Snap</label
-            >
-            <label class="chk"><input type="checkbox" id="live" /> Live</label>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CrumpleBrowser — Multi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <button id="new">New (click board)</button>
+    <button id="mode">Edit</button>
+    <label class="base">Base <input id="base" type="range" min="0.30" max="1.00" step="0.01" value="0.70"/></label>
+    <label class="chk"><input type="checkbox" id="live" checked/> Live (20 fps)</label>
+    <div class="hint">Click empty space to create a window · drag title to move · drag corner to resize · wheel on lens = radius · Alt+wheel = strength · Press E to toggle Edit/Interact</div>
+  </header>
 
-            <button id="mode">Edit</button>
-            <label class="base"
-                >Base
-                <input
-                    id="base"
-                    type="range"
-                    min="0.30"
-                    max="1.00"
-                    step="0.01"
-                    value="0.70"
-            /></label>
-            <button id="clear">Clear</button>
+  <div id="board" tabindex="-1"></div>
 
-            <div class="tests">
-                <span>Tests:</span>
-                <button id="tGrad">Gradient</button>
-                <button id="tGrid">UV Grid</button>
-                <button id="tSnap">Snap Now</button>
-                <button id="tForce">Force Lens</button>
-                <button id="tClearTex">Clear Tex</button>
-                <button id="tToggleLive">Hide live</button>
-                <button id="tCenter">Center Click</button>
-                <button id="tScrollTest">Scroll Test</button>
-                <button id="tReport">Report</button>
-            </div>
-        </header>
+  <!-- URL palette -->
+  <div id="palette" class="hidden">
+    <input id="urlIn" placeholder="Type a URL and hit Enter" />
+    <div class="help">Esc to cancel</div>
+  </div>
 
-        <div id="stage">
-            <webview id="page" src="https://example.org" allowpopups></webview>
-            <canvas id="gl"></canvas>
-            <canvas id="hud" oncontextmenu="return false"></canvas>
-        </div>
-
-        <script type="module" src="renderer.js"></script>
-    </body>
+  <script type="module" src="renderer.js"></script>
+</body>
 </html>
