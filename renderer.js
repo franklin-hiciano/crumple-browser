@@ -26,6 +26,11 @@ window.addEventListener("DOMContentLoaded", () => {
   const tCenter = document.getElementById("tCenter");
   const tScrollTest = document.getElementById("tScrollTest");
   const tReport = document.getElementById("tReport");
+  const liveChk = document.getElementById("live");
+  let liveOn = false,
+    liveRAF = null,
+    lastFrameTS = 0;
+  const LIVE_FPS = 30;
 
   const required = [
     webview,
@@ -79,6 +84,32 @@ window.addEventListener("DOMContentLoaded", () => {
   let liveHidden = false;
   const dbg = { haveTex: false, texW: 0, texH: 0, lastSnap: 0 };
   let lastMapped = null; // {x,y,t} in DIP
+
+  async function liveTick(ts) {
+    if (!liveOn) {
+      liveRAF = null;
+      return;
+    }
+    // throttle to LIVE_FPS and ensure we don't overlap snaps
+    if (ts - lastFrameTS >= 1000 / LIVE_FPS) {
+      lastFrameTS = ts;
+      await snap(); // reuses your existing capture/upload
+    }
+    liveRAF = requestAnimationFrame(liveTick);
+  }
+
+  function setLive(on) {
+    liveOn = !!on;
+    if (liveOn) {
+      // live mode supersedes auto-snap (optional)
+      autoChk.checked = false;
+      if (!liveRAF) liveRAF = requestAnimationFrame(liveTick);
+    } else {
+      // loop stops on next frame naturally
+    }
+  }
+
+  liveChk.onchange = () => setLive(liveChk.checked);
 
   // DPR handling
   function dpr() {
