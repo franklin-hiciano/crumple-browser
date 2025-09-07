@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crumple — Image Test</title>
+  <title>Crumple — Image Test (Reveal + Stroke)</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,10 +11,20 @@
     <button id="mode">Edit</button>
     <label class="base">Base <input id="base" type="range" min="0.30" max="1.00" step="0.01" value="0.80"/></label>
     <button id="loadImg">Load Image</button>
-    <div class="hint">Edit: click to add lens, drag to move • Wheel = radius • Alt+Wheel = strength • Drag corner to resize</div>
+    <label class="chk"><input type="checkbox" id="reveal" /> Reveal only</label>
+    <label class="base">Soft <input id="soft" type="range" min="0.5" max="2.0" step="0.05" value="1.0"/></label>
+    <div class="hint">Edit: click to add lens, drag to move • Wheel = radius • Alt+Wheel = strength • Alt‑drag = stroke → micro‑lenses • Shift‑click = delete</div>
   </header>
-  <div id="stage"><div class="view"><canvas id="gl"></canvas><canvas id="hud"></canvas></div></div>
+
+  <div id="stage">
+    <div class="view">
+      <canvas id="gl"></canvas>
+      <canvas id="hud"></canvas>
+    </div>
+  </div>
+
   <input id="imgPicker" type="file" accept="image/*" style="display:none" />
+
   <script type="module" src="renderer.js"></script>
 </body>
 </html>
