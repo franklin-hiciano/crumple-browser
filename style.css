@@ -1,0 +1,14 @@
+:root { --bg:#0b0b10; --line:#2b2d3f; --text:#e5e7eb; --muted:#9aa2b1; }
+* { box-sizing: border-box; }
+html,body { height:100%; margin:0; background:var(--bg); color:var(--text); font:14px system-ui, -apple-system, Segoe UI, Roboto; }
+header { display:flex; gap:8px; align-items:center; padding:8px; border-bottom:1px solid var(--line); background:#11121a; position:relative; z-index:2; }
+header input#url { flex:0 0 520px; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:#0f111a; color:var(--text); }
+header .spacer { flex:1; }
+header button, header label.chk { background:#1b1e30; color:var(--text); border:1px solid #31344c; border-radius:8px; padding:6px 10px; cursor:pointer; }
+header .base { display:flex; align-items:center; gap:6px; color:#9aa2b1; }
+header .base input { width:120px; }
+header .tests { display:flex; gap:6px; align-items:center; margin-left:10px; }
+#stage { position:fixed; inset:40px 0 0 0; display:block; }
+#page { position:absolute; inset:0; border:0; z-index:1; }
+#gl   { position:absolute; inset:0; z-index:2; pointer-events: none; }  /* IMPORTANT */
+#hud  { position:absolute; inset:0; z-index:3; pointer-events: auto; }  /* IMPORTANT */
